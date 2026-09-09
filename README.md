@@ -1,152 +1,187 @@
 <div align="center">
 
-# AWARE BN462 Rust Artifact
+# 🛡️ AWARE: Accountable Anonymous Reporting with Threshold Opening
 
-Complete Rust implementation and experiment harness for the AWARE protocol.
+[TL;DR](#tldr) • [Overview](#overview) • [Code Map](#code-map) • [Setup](#setup) • [Run Experiments](#run-experiments) • [Citation](#citation)
 
-![Rust](https://img.shields.io/badge/rust-1.89%2B-orange)
-![Status](https://img.shields.io/badge/status-research%20artifact-lightgrey)
-![Curve](https://img.shields.io/badge/curve-MIRACL%20Core%20BN462-blue)
+[[Repository](https://github.com/Zora-G/AWARE)]
+
+![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
+![Rust 1.89+](https://img.shields.io/badge/rust-1.89%2B-orange)
+![Status: research code](https://img.shields.io/badge/status-research%20code-lightgrey)
+![Curve: BN462](https://img.shields.io/badge/curve-MIRACL%20Core%20BN462-teal)
+![Artifact: benchmarks](https://img.shields.io/badge/artifact-benchmarks-purple)
 
 </div>
 
-## Overview
+<p align="center">
+  <img src="./materials/aware_protocol_costs.png" alt="AWARE BN462 protocol costs across token preparation, report generation, and opening" width="100%">
+</p>
 
-This repository is the minimal AWARE artifact package. It contains the BN462
-Rust implementation, all benchmark entry points used by the manuscript results,
-default experiment parameters, and scripts for reproducing Table II, Fig. 2,
-Fig. 3, Table III, and the AWARE-side measurements for Table IV.
+<p align="center"><em>AWARE provides anonymous report submission with holder binding, one-shot acceptance, and accountable threshold opening.</em></p>
 
-Default protocol parameters are recorded in
-[`config/defaults.json`](./config/defaults.json): `m=15`, `n=5`, `t=3`,
-`lambda=128`, 1 MiB report payloads, 30 measured runs, and 10 warmups.
+<a id="tldr"></a>
+## ✨ TL;DR
 
-## Code Map
+**AWARE** is a cryptographic reporting artifact for anonymous submissions that remain accountable under a threshold opening process. This repository contains the minimal Rust implementation and benchmark harness used for the BN462 manuscript measurements.
+
+| What to know | AWARE in one line |
+| --- | --- |
+| 🎯 Protocol | Complete Rust implementation of `Setup`, `RegU`, `RegIss`, `RegObt`, `RepGen`, `PostAccept`, `RepDec`, and `RepCom`. |
+| 🔐 Instantiation | MIRACL Core BN462, SHA-256 transcripts, AES-256-GCM payload encryption, and canonical AWCE/AWCL framing. |
+| ⚙️ Defaults | `m=15`, `n=5`, `t=3`, `lambda=128`, 1 MiB payloads, 30 measured trials, and 10 warmups. |
+| 📊 Evaluation | Benchmark entry points reproduce Table II, Fig. 2, Fig. 3, Table III, and the AWARE-side columns of Table IV. |
+| 📦 Scope | Rust protocol, experiment scripts, pinned Cargo dependencies, and Table IV GlobaLeaks provenance are included; old Java and paper-build artifacts are excluded. |
+
+The package is intentionally small: source code, tests, benchmark drivers, configuration, and the comparison data needed to render the reported tables.
+
+<a id="overview"></a>
+## 🔍 Overview
+
+AWARE separates anonymous report generation from accountable threshold opening. A user obtains one of `m` epoch-scoped tokens, generates a report bound to the token holder, and posts it to a bulletin board that accepts the first valid serial. Committee members later contribute verifiable decryption shares, and the combiner either recovers the report or identifies invalid opening contributions.
+
+The Rust implementation follows the latest BN462 migration contract in [`rust_protocol/MIGRATION.md`](./rust_protocol/MIGRATION.md). It keeps the measured operation boundaries used by the paper: setup, registration, issuer token generation, user token obtainment, report generation, bulletin-board acceptance, committee decryption, and opening combination.
+
+<p align="center">
+  <img src="./materials/aware_scalability.png" alt="AWARE BN462 scalability measurements for issuer token generation and bulletin-board throughput" width="86%">
+</p>
+
+<p align="center"><em>System-level sweeps measure issuer token generation and bulletin-board acceptance throughput under the same benchmark harness.</em></p>
+
+<a id="code-map"></a>
+## 🗺️ Code Map
 
 | Path | Purpose |
 | --- | --- |
-| [`src/`](./src/) | AWARE BN462 implementation: algebra, canonical encodings, TNIBS, holder binding, threshold encryption, reporting, ledger acceptance, and accountable opening. |
-| [`src/bin/aware-bench.rs`](./src/bin/aware-bench.rs) | Single benchmark binary covering every paper operation. |
-| [`tests/`](./tests/) | Rust correctness and streaming tests retained for implementation validation. |
-| [`vendor/mcore/`](./vendor/mcore/) | Vendored MIRACL Core BN462 dependency and upstream license. |
-| [`scripts/run_pipeline.py`](./scripts/run_pipeline.py) | Parameter-sweep runner that emits raw per-trial CSVs and manifests. |
-| [`scripts/render_results.py`](./scripts/render_results.py) | Renderer for figures and LaTeX/CSV tables. |
-| [`scripts/reuse_comparison.py`](./scripts/reuse_comparison.py) | Seeds the unchanged GlobaLeaks comparison files used when rendering Table IV. |
-| [`data/globaleaks_official_comparison/`](./data/globaleaks_official_comparison/) | Bundled provenance and raw summaries for the official GlobaLeaks side of Table IV. |
+| [`rust_protocol/`](./rust_protocol/) | Complete AWARE BN462 Rust implementation, Cargo manifest, lockfile, tests, and vendored MIRACL Core BN462 code. |
+| [`rust_protocol/src/tnibs.rs`](./rust_protocol/src/tnibs.rs) | Registration and token issuance/obtainment: `RegU`, `RegIss`, and `RegObt`. |
+| [`rust_protocol/src/tgs.rs`](./rust_protocol/src/tgs.rs) | Threshold encryption, share decryption, and share combination. |
+| [`rust_protocol/src/protocol.rs`](./rust_protocol/src/protocol.rs) | Report generation and bulletin-board acceptance: `RepGen` and `PostAccept`. |
+| [`rust_protocol/src/opening.rs`](./rust_protocol/src/opening.rs) | Accountable threshold opening: `RepDec` and `RepCom`. |
+| [`rust_protocol/src/bin/aware-bench.rs`](./rust_protocol/src/bin/aware-bench.rs) | Benchmark binary for every paper operation and ablation. |
+| [`experiments/config/defaults.json`](./experiments/config/defaults.json) | Default parameters and sweeps: `m=15`, `n=5`, `t=3`, `lambda=128`, payload sizes, worker counts, and trial schedules. |
+| [`experiments/scripts/`](./experiments/scripts/) | Pipeline, rendering, Table IV AWARE-side benchmark, and comparison-data seeding scripts. |
+| [`experiments/data/globaleaks_official_comparison/`](./experiments/data/globaleaks_official_comparison/) | Bundled official GlobaLeaks 5.0.99 comparison data and provenance for Table IV rendering. |
+| [`materials/`](./materials/) | README figures generated by the benchmark renderer. |
 
-## Protocol Operations
+### Result-to-code map
 
-| Paper stage | Rust entry point |
-| --- | --- |
-| `Setup` | `tnibs::signer`, `tgs::keygen`, `opening::keygen` |
-| `RegU` | `tnibs::register` |
-| `RegIss` | `tnibs::prepare_issue`, `tnibs::issue` |
-| `RegObt` | `tnibs::obtain` / `tnibs::obtain_with_randomness` |
-| `RepGen` | `protocol::generate` / `protocol::generate_stream` |
-| `PostAccept` | `protocol::Ledger::accept` |
-| `RepDec` | `opening::contribute` |
-| `RepCom` | `opening::combine` / `opening::combine_to_sink` |
+| Paper result | Execution / preprocessing | Analysis |
+| --- | --- | --- |
+| Table II | `experiments/scripts/run_pipeline.py --target TableII` | `experiments/scripts/render_results.py` |
+| Fig. 2 | `experiments/scripts/run_pipeline.py --target Fig2` | `experiments/scripts/render_results.py`, emits `fig2_aware_bn462.{pdf,png,svg}` |
+| Fig. 3 | `experiments/scripts/run_pipeline.py --target Fig3` | `experiments/scripts/render_results.py`, emits `fig3_aware_bn462.{pdf,png,svg}` |
+| Table III | `experiments/scripts/run_pipeline.py --target TableIII` | `experiments/scripts/render_results.py` |
+| Table IV, AWARE side | `experiments/scripts/run_table_iv_aware.sh` | `experiments/scripts/render_results.py` |
+| Table IV, GlobaLeaks side | `experiments/scripts/reuse_comparison.py` | Validates and copies bundled official comparison summaries |
 
-## Setup
+<a id="setup"></a>
+## ⚙️ Setup
 
-The recorded artifact environment used Ubuntu 24.04, Python 3.12, OpenSSL, and
-a Xeon Gold 6133 server for server-side timings. The checked-in `Cargo.lock`
-was generated with Rust 1.89.0 and is intended for Rust 1.89 or newer.
+The recorded artifact environment used Ubuntu 24.04, Python 3.12, OpenSSL, and a Xeon Gold 6133 server for server-side timings. The checked-in `Cargo.lock` was generated with Rust 1.89.0 and is intended for Rust 1.89 or newer.
 
 ```bash
-git clone https://github.com/Zora-G/AWARE-BN462.git
-cd AWARE-BN462
+git clone https://github.com/Zora-G/AWARE.git
+cd AWARE
 
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
-cargo build --release --locked --features benchmarks
-cargo test --locked
+cargo build --release --locked --features benchmarks --manifest-path rust_protocol/Cargo.toml
 ```
 
-On macOS with Homebrew OpenSSL, set the library path before building if Cargo
-cannot find OpenSSL:
+On macOS with Homebrew OpenSSL, expose the library path when building or testing:
 
 ```bash
 export LIBRARY_PATH="$(brew --prefix openssl@3)/lib"
 ```
 
-## Benchmark Entry Points
-
-The benchmark binary has one positional interface:
+Focused implementation checks:
 
 ```bash
-target/release/aware-bench <operation> <runs> <warmups> <n> <t> <m> <payload_bytes> <users> <workers> <clients> [stream]
+cargo fmt --check --manifest-path rust_protocol/Cargo.toml
+cargo test --locked --manifest-path rust_protocol/Cargo.toml
 ```
 
-Supported operations are `Setup`, `RegU`, `RegIss`, `RegObt`, `TGSEnc`,
-`RepGen`, `PostAccept`, `RepDec`, `RepCom`, `CompleteOpen`,
-`HolderAblation`, `OpeningAblation`, `EpochIssuance`, `BB`, and
-`ReplayRace`.
+<a id="run-experiments"></a>
+## 🚀 Run Experiments
+
+Build the benchmark binary:
+
+```bash
+experiments/scripts/build_release.sh
+```
+
+Inspect the benchmark interface:
+
+```bash
+rust_protocol/target/release/aware-bench \
+  <operation> <runs> <warmups> <n> <t> <m> <payload_bytes> <users> <workers> <clients> [stream]
+```
+
+Supported operations are `Setup`, `RegU`, `RegIss`, `RegObt`, `TGSEnc`, `RepGen`, `PostAccept`, `RepDec`, `RepCom`, `CompleteOpen`, `HolderAblation`, `OpeningAblation`, `EpochIssuance`, `BB`, and `ReplayRace`.
 
 Example with the default paper parameters:
 
 ```bash
-target/release/aware-bench RepGen 30 10 5 3 15 1048576 1 8 1
+rust_protocol/target/release/aware-bench RepGen 30 10 5 3 15 1048576 1 8 1
 ```
 
-## Reproduce Results
-
-Run the full public artifact script for Table II, Fig. 2, Fig. 3, and Table III:
+Run the manuscript artifact sweep for Table II, Fig. 2, Fig. 3, and Table III:
 
 ```bash
-scripts/run_fig2_fig3_table2_table3.sh
+experiments/scripts/run_fig2_fig3_table2_table3.sh
 ```
 
-Outputs are written under `results/paper/` and `figures/paper/`. For servers
-where CPU pinning is required, set `AWARE_CPUS`:
+Use CPU pinning on the server host when reproducing the recorded setup:
 
 ```bash
-AWARE_CPUS=0-39 scripts/run_fig2_fig3_table2_table3.sh
+AWARE_CPUS=0-39 experiments/scripts/run_fig2_fig3_table2_table3.sh
 ```
 
-Run only the AWARE-side benchmark needed for Table IV:
+Run only the AWARE-side measurements for Table IV:
 
 ```bash
-scripts/run_table_iv_aware.sh
+experiments/scripts/run_table_iv_aware.sh
 ```
 
-Seed the bundled GlobaLeaks comparison files when rendering Table IV:
+Seed the bundled GlobaLeaks comparison files for Table IV rendering:
 
 ```bash
-scripts/seed_table_iv_comparison.sh
+experiments/scripts/seed_table_iv_comparison.sh
 ```
 
-The renderer writes `table_II.csv`, `table_II.tex`, `table_III.csv`,
-`table_III.tex`, `table_IV.csv`, and `table_IV.tex` under
-`results/paper/summary/`. It also writes both internal and manuscript-facing
-figure names:
+Generated tables are written under `results/paper/summary/`. Generated figures are written under `figures/paper/`.
 
-| Manuscript artifact | Output files |
-| --- | --- |
-| Fig. 2 protocol costs | `fig2_aware_bn462.{pdf,png,svg}` |
-| Fig. 3 scalability | `fig3_aware_bn462.{pdf,png,svg}` |
-| Internal protocol-cost name | `fig3_bn462.{pdf,png,svg}` |
-| Internal scalability name | `fig4_bn462.{pdf,png,svg}` |
+### Reproducibility notes
 
-## Reproducibility Notes
+- The default configuration is [`experiments/config/defaults.json`](./experiments/config/defaults.json).
+- Fig. 2 uses token-preparation, report-throughput, and threshold-opening sweeps.
+- Fig. 3 uses issuer-scaling and bulletin-board-throughput sweeps.
+- Fig. 2(b) report-generation points use the streaming interface and the recorded per-payload trial schedule.
+- Table IV reuses unchanged official GlobaLeaks 5.0.99 comparison data from the same Xeon host and retains its provenance in [`experiments/data/globaleaks_official_comparison/`](./experiments/data/globaleaks_official_comparison/).
+- Large generated outputs are excluded from Git history; reruns populate `results/` and `figures/`.
+- See [`SECURITY.md`](./SECURITY.md) before adapting the artifact beyond manuscript reproduction.
 
-The implementation uses MIRACL Core BN462, SHA-256 transcripts, AES-256-GCM
-with 16-byte IVs and 16-byte tags, and AWCE/AWCL canonical framing. Large
-payload report generation uses the streaming path at and above 50 MiB.
+<a id="citation"></a>
+## 📚 Citation
 
-Table IV reuses the unchanged official GlobaLeaks 5.0.99 comparison data from
-the same Xeon host and keeps the original provenance files in `data/`. The
-AWARE columns are regenerated by `scripts/run_table_iv_aware.sh`.
+If you use this code, please cite the AWARE manuscript. GitHub can also read the repository metadata from [`CITATION.cff`](./CITATION.cff).
 
-See [`MIGRATION.md`](./MIGRATION.md) for the precise migration contract and
-cryptographic instantiation decisions.
+```bibtex
+@misc{aware2026bn462,
+  title        = {AWARE: Accountable Anonymous Reporting with Threshold Opening},
+  author       = {Gao, Ge},
+  year         = {2026},
+  howpublished = {Research artifact},
+  url          = {https://github.com/Zora-G/AWARE}
+}
+```
 
-## License
+<a id="license"></a>
+## 📄 License
 
-This repository is a public research snapshot. The source is provided under the
-proprietary terms recorded in [`CITATION.cff`](./CITATION.cff); no broad
-open-source license is granted. Third-party dependencies retain their own
-licenses.
+This repository is a public research snapshot. The source is provided under the proprietary terms recorded in [`CITATION.cff`](./CITATION.cff); no broad open-source license is granted. Third-party dependencies retain their own licenses.
+

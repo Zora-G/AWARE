@@ -2,9 +2,10 @@
 """Run the paper's complete parameter sweeps with genuine BN462 operations."""
 import argparse,csv,json,os,platform,subprocess,time
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]
+EXPERIMENTS=Path(__file__).resolve().parents[1]
+ROOT=EXPERIMENTS.parent
 K=1024;M=K*K;G=K*M
-DEFAULT_CONFIG=ROOT/'config/defaults.json'
+DEFAULT_CONFIG=EXPERIMENTS/'config/defaults.json'
 DEFAULTS=json.loads(DEFAULT_CONFIG.read_text())['protocol']
 PAYLOADS=[10*K,100*K,512*K,M,20*M,50*M,100*M,150*M,500*M,G,5*G]
 TOKENS=[1,5,10,15,20,30]
@@ -25,17 +26,17 @@ def jobs(role,fig3b_rounds=30,defaults=None):
             job.update(rounds=fig3b_rounds,runs_per_round=runs,runs=runs*fig3b_rounds,stream=True)
         out.append(job)
     if role=='client':
-        for m in TOKENS:add(f'fig3_regobt_m{m}','RegObt',m=m,targets=['Fig3a','TableII'] if m==15 else ['Fig3a'])
+        for m in TOKENS:add(f'fig3_regobt_m{m}','RegObt',m=m,targets=['Fig2','Fig2a','Fig3a','TableII'] if m==15 else ['Fig2','Fig2a','Fig3a'])
         add('table2_regu','RegU',targets=['TableII'])
         for p in PAYLOADS:
             runs,warmups=(1,0) if p==5*G else (5,2) if p>=50*M else (30,10)
-            for op in ['TGSEnc','RepGen']:add(f'fig3_{op}_{p}',op,runs,warmups,payload=p,targets=['Fig3b','TableII'] if p==M and op=='RepGen' else ['Fig3b'])
+            for op in ['TGSEnc','RepGen']:add(f'fig3_{op}_{p}',op,runs,warmups,payload=p,targets=['Fig2','Fig2b','Fig3b','TableII'] if p==M and op=='RepGen' else ['Fig2','Fig2b','Fig3b'])
         add('table3_holder_client','HolderAblation',targets=['TableIII'])
     if role=='server':
-        for m in TOKENS:add(f'fig3_regiss_m{m}','RegIss',m=m,targets=['Fig3a','TableII'] if m==15 else ['Fig3a'])
+        for m in TOKENS:add(f'fig3_regiss_m{m}','RegIss',m=m,targets=['Fig2','Fig2a','Fig3a','TableII'] if m==15 else ['Fig2','Fig2a','Fig3a'])
         for n in [6,9,12,15]:
             for t in [2,4,6,8,10]:
-                if t<=n:add(f'fig3_open_n{n}_t{t}','CompleteOpen',n=n,t=t,targets=['Fig3c'])
+                if t<=n:add(f'fig3_open_n{n}_t{t}','CompleteOpen',n=n,t=t,targets=['Fig2','Fig2c','Fig3c'])
         for op in ['Setup','PostAccept','RepDec','RepCom','CompleteOpen']:add(f'table2_{op}',op,targets=['TableII'])
         add('table3_holder_server','HolderAblation',targets=['TableIII'])
         add('table3_opening','OpeningAblation',targets=['TableIII'])
@@ -44,15 +45,15 @@ def jobs(role,fig3b_rounds=30,defaults=None):
             for op in ['RepGen','RepDec','RepCom']:add(f'table4_{op}_{p}',op,runs,warmups,payload=p,targets=['TableIV'])
         for clients in [2,4,8,16,32,64]:add(f'replay_c{clients}','ReplayRace',100,10,clients=clients,targets=['SecurityReplay'])
         for workers in [1,4,8,16]:
-            for users in [10,100,500,1000,5000,10000]:add(f'fig4_issuance_u{users}_w{workers}','EpochIssuance',10 if users<=1000 else 3,10,users=users,workers=workers,targets=['Fig4a'])
-        for clients in CLIENTS:add(f'fig4_bb_c{clients}','BB',5,20,clients=clients,targets=['Fig4b'])
+            for users in [10,100,500,1000,5000,10000]:add(f'fig4_issuance_u{users}_w{workers}','EpochIssuance',10 if users<=1000 else 3,10,users=users,workers=workers,targets=['Fig3','Fig3a','Fig4a'])
+        for clients in CLIENTS:add(f'fig4_bb_c{clients}','BB',5,20,clients=clients,targets=['Fig3','Fig3b','Fig4b'])
     return out
 
 def argv(binary,j,runs=None):
     command=[str(binary),j['operation'],str(runs if runs is not None else j['runs'])]+[str(j[k]) for k in ['warmups','n','t','m','payload','users','workers','clients']]
     return command+['stream'] if j.get('stream') else command
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--role',required=True,choices=['client','server']);p.add_argument('--output',type=Path,required=True);p.add_argument('--binary',type=Path,default=ROOT/'target/release/aware-bench');p.add_argument('--config',type=Path,default=DEFAULT_CONFIG);p.add_argument('--job',action='append');p.add_argument('--target',action='append',help='Run jobs tagged for a paper artifact, e.g. TableII, Fig3a, Fig3b, Fig3c, TableIII, TableIV, Fig4a, Fig4b.');p.add_argument('--manifest-only',action='store_true');p.add_argument('--cpus',help='taskset physical CPU list on the server');p.add_argument('--fig3b-rounds',type=int,default=30);args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--role',required=True,choices=['client','server']);p.add_argument('--output',type=Path,required=True);p.add_argument('--binary',type=Path,default=ROOT/'rust_protocol/target/release/aware-bench');p.add_argument('--config',type=Path,default=DEFAULT_CONFIG);p.add_argument('--job',action='append');p.add_argument('--target',action='append',help='Run jobs tagged for a paper artifact, e.g. TableII, Fig2, Fig2a, Fig2b, Fig2c, Fig3, Fig3a, Fig3b, TableIII, TableIV.');p.add_argument('--manifest-only',action='store_true');p.add_argument('--cpus',help='taskset physical CPU list on the server');p.add_argument('--fig3b-rounds',type=int,default=30);args=p.parse_args()
     args.output.mkdir(parents=True,exist_ok=True);(args.output/'raw').mkdir(exist_ok=True)
     defaults=json.loads(args.config.read_text())['protocol']
     manifest=jobs(args.role,args.fig3b_rounds,defaults)

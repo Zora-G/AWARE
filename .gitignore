@@ -1,5 +1,5 @@
 .DS_Store
-target/
+rust_protocol/target/
 results/
 figures/
 .venv/
@@ -17,4 +17,4 @@ __pycache__/
 *.stdout
 *.status
 *.jsonl
-!data/**/*.jsonl
+!experiments/data/**/*.jsonl

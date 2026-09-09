@@ -7,8 +7,8 @@ import shutil
 import statistics
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / 'data/globaleaks_official_comparison'
+EXPERIMENTS = Path(__file__).resolve().parents[1]
+SOURCE = EXPERIMENTS / 'data/globaleaks_official_comparison'
 PAYLOADS = {'10k': 10240, '1m': 1048576, '100m': 104857600,
             '1g': 1073741824, '5g': 5368709120}
 COMMIT = '8e015fd4cb8d56c54b8c9d9e0e695d6e815510f5'
