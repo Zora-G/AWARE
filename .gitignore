@@ -1,0 +1,20 @@
+.DS_Store
+target/
+results/
+figures/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local machine configuration and logs.
+.env
+.env.*
+*.log
+*.stderr
+*.stdout
+*.status
+*.jsonl
+!data/**/*.jsonl

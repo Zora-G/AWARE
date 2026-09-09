@@ -1,0 +1,33 @@
+{
+  "protocol": {
+    "m": 15,
+    "n": 5,
+    "t": 3,
+    "lambda_bits": 128,
+    "payload_bytes": 1048576,
+    "runs": 30,
+    "warmups": 10,
+    "client_workers": 8,
+    "server_workers": 40,
+    "streaming_threshold_bytes": 52428800,
+    "large_payload_runs": {
+      "from_50_mib_to_1_gib": {
+        "runs": 5,
+        "warmups": 2
+      },
+      "at_5_gib": {
+        "runs": 1,
+        "warmups": 0
+      }
+    }
+  },
+  "sweeps": {
+    "tokens_per_epoch": [1, 5, 10, 15, 20, 30],
+    "payload_bytes": [10240, 102400, 524288, 1048576, 20971520, 52428800, 104857600, 157286400, 524288000, 1073741824, 5368709120],
+    "opening_n": [6, 9, 12, 15],
+    "opening_t": [2, 4, 6, 8, 10],
+    "issuance_users": [10, 100, 500, 1000, 5000, 10000],
+    "issuance_workers": [1, 4, 8, 16],
+    "bb_concurrency": [1, 2, 4, 8, 16, 32, 64, 128, 256]
+  }
+}

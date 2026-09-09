@@ -1,0 +1,51 @@
+{
+  "aggregate_audit_runs": 1,
+  "aggregate_operation": "raw audit only",
+  "benchmark": "pinned official GlobaLeaks one-file cryptographic report path",
+  "boundary_catalog": {
+    "GLRecipientOpen": "GLRecipientOpen/globaleaks-5.0.99/one-recipient-tip-answers-filemeta-gcev2/v1",
+    "GLRecipientOpenAggregate5": "GLRecipientOpenAggregate5/globaleaks-5.0.99/serial-audit-only/v1",
+    "GLSubmitCrypto": "GLSubmitCrypto/globaleaks-5.0.99/receipt-session-selfwrap-answers-filemeta-r5-gcev2-official-delivery/v1"
+  },
+  "chunk_bytes": 65536,
+  "chunk_source": "twisted.internet.abstract.FileDescriptor.bufferSize",
+  "ciphertext_bytes_max": 107581173,
+  "ciphertext_bytes_min": 107436734,
+  "correctness_digest": "20492a4d0d84f8beb1767f6616229f85d44c2827b64bdbfb260ee12fa1109e0e",
+  "dependency_versions": {
+    "PyNaCl": "1.5.0",
+    "Twisted": "24.3.0",
+    "cryptography": "41.0.7",
+    "pyotp": "2.9.0"
+  },
+  "globaleaks_commit": "8e015fd4cb8d56c54b8c9d9e0e695d6e815510f5",
+  "globaleaks_root": "/home/gg/paper/AWARE/experiments/vendor/globaleaks-official-8e015fd",
+  "globaleaks_version": "5.0.99",
+  "impl_hash": "0c83ba1681bd140e4f290506635869053deb5d50cd29d6138c03c1906332d6e4",
+  "machine": "xeon-server",
+  "measured_runs": 30,
+  "paper_operations": [
+    "GLSubmitCrypto",
+    "GLRecipientOpen"
+  ],
+  "payload_size_bytes": 104857600,
+  "platform": "Linux-6.11.0-25-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+  "recipient_semantics": "five authorized recipients; any selected recipient can open",
+  "recipients": 5,
+  "role": "comparison",
+  "secretstream_available": true,
+  "source_hashes": {
+    "backend/globaleaks/handlers/recipient/rtip.py": "cb3235078545a5ea8d2ce8f6d4f9718499a29c26de49e2f9b763cc2f72e73e3e",
+    "backend/globaleaks/handlers/whistleblower/submission.py": "5b0ffa938b25364c1b8ae8b2d14b7fa63c720c09f02ecf8f495b9a1d01190953",
+    "backend/globaleaks/jobs/delivery.py": "7146617caa85fe73ab72fb5d051395f21e93091a91c801217d52455195323863",
+    "backend/globaleaks/utils/crypto.py": "feccc66f8dba25ab9aa903260409bfd6e3a819b3b9634f9d9f2c290bee2521b5",
+    "backend/requirements/requirements.txt.noble": "8eae78b00ac8762b4ccaaee6db49cc6acd8b95583d98ecbdd6fe8e22055ec199"
+  },
+  "storage": "/dev/shm/aware-clean-xeon-20260904/globaleaks/100m",
+  "timed_open": "one rotating recipient tip-key unwrap, answers/file-metadata decrypt, and complete GCE-v2 file stream decrypt",
+  "timed_submit": "official receipt hash, tip keypair, session-key protection, whistleblower self-wrap, empty answers encryption, one-file metadata encryption, five recipient wraps, and delivery.write_encrypted_file",
+  "timer": "perf_counter_ns",
+  "untimed": "key/payload fixtures, file cleanup, stat, correctness digest, database, HTTP/network, Tor, and persistent storage",
+  "warmups": 10
+}

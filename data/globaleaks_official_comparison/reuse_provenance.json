@@ -1,0 +1,52 @@
+[
+  {
+    "payload_bytes": 10240,
+    "source": "experiments/results/redesign/revision3/clean_xeon_final_20260904/table4_official_globaleaks/jobs/10k",
+    "original_finished_utc": "2026-09-04T22:20:40.855524+00:00",
+    "original_host": "k1939-ESC8000-G4",
+    "cpus": "0-39",
+    "runs": 30,
+    "warmups": 10,
+    "reuse_reason": "Unchanged official GlobaLeaks implementation, parameters and operation boundaries on the same Xeon host."
+  },
+  {
+    "payload_bytes": 1048576,
+    "source": "experiments/results/redesign/revision3/clean_xeon_final_20260904/table4_official_globaleaks/jobs/1m",
+    "original_finished_utc": "2026-09-04T22:21:07.019304+00:00",
+    "original_host": "k1939-ESC8000-G4",
+    "cpus": "0-39",
+    "runs": 30,
+    "warmups": 10,
+    "reuse_reason": "Unchanged official GlobaLeaks implementation, parameters and operation boundaries on the same Xeon host."
+  },
+  {
+    "payload_bytes": 104857600,
+    "source": "experiments/results/redesign/revision3/clean_xeon_final_20260904/table4_official_globaleaks/jobs/100m",
+    "original_finished_utc": "2026-09-04T22:21:54.526224+00:00",
+    "original_host": "k1939-ESC8000-G4",
+    "cpus": "0-39",
+    "runs": 30,
+    "warmups": 10,
+    "reuse_reason": "Unchanged official GlobaLeaks implementation, parameters and operation boundaries on the same Xeon host."
+  },
+  {
+    "payload_bytes": 1073741824,
+    "source": "experiments/results/redesign/revision3/clean_xeon_final_20260904/table4_official_globaleaks/jobs/1g",
+    "original_finished_utc": "2026-09-04T22:23:28.583289+00:00",
+    "original_host": "k1939-ESC8000-G4",
+    "cpus": "0-39",
+    "runs": 1,
+    "warmups": 0,
+    "reuse_reason": "Unchanged official GlobaLeaks implementation, parameters and operation boundaries on the same Xeon host."
+  },
+  {
+    "payload_bytes": 5368709120,
+    "source": "experiments/results/redesign/revision3/clean_xeon_final_20260904/table4_official_globaleaks/jobs/5g",
+    "original_finished_utc": "2026-09-04T22:26:13.328570+00:00",
+    "original_host": "k1939-ESC8000-G4",
+    "cpus": "0-39",
+    "runs": 1,
+    "warmups": 0,
+    "reuse_reason": "Unchanged official GlobaLeaks implementation, parameters and operation boundaries on the same Xeon host."
+  }
+]
