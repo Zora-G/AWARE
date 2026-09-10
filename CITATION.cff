@@ -1,10 +1,18 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite the AWARE manuscript."
-title: "AWARE BN462 Rust Artifact"
+title: "AWARE: A Non-Interactive Anonymous Whistleblowing System against Recipient Corruption"
 type: software
 authors:
   - family-names: Gao
     given-names: Ge
+  - family-names: Yu
+    given-names: Haining
+  - family-names: Yang
+    given-names: Jinbo
+  - family-names: Zhan
+    given-names: Dongyang
+  - family-names: Jia
+    given-names: Xiaohua
 version: 0.1.0
 date-released: 2026-09-09
 repository-code: "https://github.com/Zora-G/AWARE"

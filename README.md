@@ -1,10 +1,10 @@
 <div align="center">
 
-# 🛡️ AWARE: Accountable Anonymous Reporting with Threshold Opening
+# 🛡️ AWARE: A Non-Interactive Anonymous Whistleblowing System against Recipient Corruption
 
 [TL;DR](#tldr) • [Overview](#overview) • [Code Map](#code-map) • [Setup](#setup) • [Run Experiments](#run-experiments) • [Citation](#citation)
 
-[[Repository](https://github.com/Zora-G/AWARE)]
+[[Repository](https://github.com/Zora-G/AWARE)] [[PDF](./paper/AWARE-TDSC-Accountable.pdf)]
 
 ![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
 ![Rust 1.89+](https://img.shields.io/badge/rust-1.89%2B-orange)
@@ -18,12 +18,12 @@
   <img src="./materials/aware_workflow.png" alt="AWARE workflow: periodic issuance, anonymous submission, and accountable threshold opening" width="100%">
 </p>
 
-<p align="center"><em>AWARE provides anonymous report submission with holder binding, one-shot acceptance, and accountable threshold opening.</em></p>
+<p align="center"><em>AWARE lets registered insiders submit reports anonymously without contacting the authentication server at submission time, while requiring threshold recipient participation for report opening.</em></p>
 
 <a id="tldr"></a>
 ## ✨ TL;DR
 
-**AWARE** is a cryptographic reporting artifact for anonymous submissions that remain accountable under a threshold opening process. This repository contains the minimal Rust implementation and benchmark harness used for the BN462 manuscript measurements.
+**AWARE** is a non-interactive anonymous whistleblowing protocol for registered users facing recipient corruption. This repository contains the minimal Rust implementation and benchmark harness used for the BN462 measurements in the manuscript.
 
 | What to know | AWARE in one line |
 | --- | --- |
@@ -31,9 +31,9 @@
 | 🔐 Instantiation | MIRACL Core BN462, SHA-256 transcripts, AES-256-GCM payload encryption, and canonical AWCE/AWCL framing. |
 | ⚙️ Defaults | `m=15`, `n=5`, `t=3`, `lambda=128`, 1 MiB payloads, 30 measured trials, and 10 warmups. |
 | 📊 Evaluation | Benchmark entry points reproduce Table II, Fig. 2, Fig. 3, Table III, and the AWARE-side columns of Table IV. |
-| 📦 Scope | Rust protocol, experiment scripts, pinned Cargo dependencies, and Table IV GlobaLeaks provenance are included; old Java and paper-build artifacts are excluded. |
+| 📦 Scope | Rust protocol, experiment scripts, pinned Cargo dependencies, the manuscript PDF, and Table IV GlobaLeaks provenance are included; old Java and paper-build artifacts are excluded. |
 
-The package is intentionally small: source code, tests, benchmark drivers, configuration, and the comparison data needed to render the reported tables.
+The package is intentionally small: the paper PDF, source code, tests, benchmark drivers, configuration, and the comparison data needed to render the reported tables.
 
 <a id="overview"></a>
 ## 🔍 Overview
@@ -60,6 +60,7 @@ shows the protocol mechanism.
 | [`experiments/config/defaults.json`](./experiments/config/defaults.json) | Default parameters and sweeps: `m=15`, `n=5`, `t=3`, `lambda=128`, payload sizes, worker counts, and trial schedules. |
 | [`experiments/scripts/`](./experiments/scripts/) | Pipeline, rendering, Table IV AWARE-side benchmark, and comparison-data seeding scripts. |
 | [`experiments/data/globaleaks_official_comparison/`](./experiments/data/globaleaks_official_comparison/) | Bundled official GlobaLeaks 5.0.99 comparison data and provenance for Table IV rendering. |
+| [`paper/`](./paper/) | Manuscript PDF used as the repository's reference paper. |
 | [`materials/`](./materials/) | README protocol workflow figure. |
 
 ### Result-to-code map
@@ -170,8 +171,8 @@ If you use this code, please cite the AWARE manuscript. GitHub can also read the
 
 ```bibtex
 @misc{aware2026bn462,
-  title        = {AWARE: Accountable Anonymous Reporting with Threshold Opening},
-  author       = {Gao, Ge},
+  title        = {AWARE: A Non-Interactive Anonymous Whistleblowing System against Recipient Corruption},
+  author       = {Gao, Ge and Yu, Haining and Yang, Jinbo and Zhan, Dongyang and Jia, Xiaohua},
   year         = {2026},
   howpublished = {Research artifact},
   url          = {https://github.com/Zora-G/AWARE}
