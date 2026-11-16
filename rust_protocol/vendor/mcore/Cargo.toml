@@ -1,0 +1,13 @@
+# Modified: clippy lints disabled.
+[package]
+name = "mcore"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[features]
+std=[]
+
+[lints.clippy]
+all = "allow"
